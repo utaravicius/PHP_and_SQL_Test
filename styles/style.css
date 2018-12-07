@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+    margin: 50px ;
+}
+
+.container {
+    margin: auto;
+}
+
+.list {
+    border: 1px solid black;
+    margin: auto;
+}
+
+th {
+    background-color: lightgrey;
+}
+
+.addCol {
+    border: 1px solid black;
+    margin: auto;
+}
+
+.field{
+    line-height: 20px;
+    width: 100px;
+}

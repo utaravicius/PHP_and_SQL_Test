@@ -20,15 +20,15 @@ class DBConnector
     {
         if ($result->num_rows > 0) {
             // output data of each row
-            echo "<table>";
             while ($row = $result->fetch_assoc()) {
                 echo "<tr>";
                 foreach ($row as $key => $value) {
-                    echo "<td>$value</td>";
+                    echo "<td><input type='text' class='field' value='$value'></td>";
                 }
+                echo "<td><input type='submit' class='field' name='delete' value='Trinti'></td>";
+                echo "<td><input type='submit' class='field' name='update' value='Saugoti'></td>";
                 echo "</tr>";
             }
-            echo "</table>";
         } else {
             echo "0 results";
         }
@@ -42,45 +42,41 @@ class DBConnector
     }
 
     // CRUD Read 1
-    public function getFineByPlates($numberPlates)
+    public function getFineByPlates()
     {
-        $query = "SELECT * FROM `sarasas` WHERE `numberPlates` = ?";
+        $query = "SELECT * FROM `sarasas` WHERE `id` = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("s", $numberPlates);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
         return $stmt->get_result();
     }
 
     // CRUD Create
-    public function addFine($numberPlates, $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $fineSie, $isPaid)
+    public function addFine($numberPlates, $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $isPaid)
     {
-        $query = "INSERT INTO `sarasas` (`numberPlates`, `carMake`, `carModel`, `carYear`, `maxSpeed`, `currentSpeed`, `fineSize`, `isPaid`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
+        $fineSize = ($currentSpeed - $maxSpeed)*2.3;
+
+        $query = "INSERT INTO `sarasas` (`id`, `numberPlates`, `carMake`, `carModel`, `carYear`, `maxSpeed`, `currentSpeed`, `fineSize`, `isPaid`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("sssiiidi", $numberPlates, $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $fineSie, $isPaid);
+        $stmt->bind_param("issiiidi", $numberPlates, $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $fineSize, $isPaid);
         $stmt->execute();
     }
 
     // CRUD Delete
-    public function deleteFine($numberPlates)
+    public function deleteFine($id)
     {
-        $query = "DELETE FROM `sarasas` WHERE `numberPlates` = ?";
+        $query = "DELETE FROM `sarasas` WHERE `id` = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("s", $numberPlates);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
     }
 
     // CRUD update
-    public function updateFine($numberPlates, $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $fineSize, $isPaid)
+    public function updateFine($id, $numberPlates, $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $fineSize, $isPaid)
     {
-        $query = "UPDATE `sarasas` SET `carMake` = ?,`carModel` = ?,`carYear` = ?,`maxSpeed` = ?,`currentSpeed` = ?,`fineSize` = ?,`isPaid` = ? WHERE `numberPlates` = ?;";
+        $query = "UPDATE `sarasas` SET `carMake` = ?,`carModel` = ?,`carYear` = ?,`maxSpeed` = ?,`currentSpeed` = ?,`fineSize` = ?,`isPaid` = ? WHERE `id` = ?;";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ssiiidis", $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $fineSize, $isPaid, $numberPlates);
+        $stmt->bind_param("ssiiidii", $carMake, $carModel, $carYear, $maxSpeed, $currentSpeed, $fineSize, $isPaid, $id);
         $stmt->execute();
-    }
-
-    public function getUzduotis1()
-    {
-        $query = "SELECT * FROM `students` ORDER BY `name` ASC;";
-        return $this->conn->query($query);
     }
 }
